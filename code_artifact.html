@@ -1,0 +1,1994 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>منصة رهف لأبطال المستقبل | KG2 Language School Edition</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Baloo Bhaijaan 2 & Fredoka for friendly bold typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@600;700;800;900&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        body {
+            font-family: 'Baloo Bhaijaan 2', 'Fredoka', cursive, sans-serif;
+            touch-action: manipulation;
+            overscroll-behavior: none;
+            background: radial-gradient(circle at 10% 20%, #fef3c7 0%, #e0f2fe 50%, #fdf2f8 100%);
+            font-size: 1.15rem;
+        }
+        .canvas-touch-none {
+            touch-action: none;
+        }
+        .card-3d {
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .card-3d:active {
+            transform: translateY(4px) scale(0.97);
+        }
+        .pop-button {
+            transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .pop-button:active {
+            transform: scale(0.92);
+        }
+        .float-bubble {
+            animation: floating 3.2s ease-in-out infinite alternate;
+        }
+        @keyframes floating {
+            0% { transform: translateY(0px) rotate(-1deg); }
+            100% { transform: translateY(-8px) rotate(1deg); }
+        }
+        .avatar-selected {
+            border-color: #ec4899 !important;
+            background-color: #fce7f3 !important;
+            transform: scale(1.08);
+            box-shadow: 0 10px 25px -5px rgba(236, 72, 153, 0.4);
+        }
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printable-certificate-card, #printable-certificate-card * {
+                visibility: visible;
+            }
+            #printable-certificate-card {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                border: 8px solid #4f46e5;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-900 flex flex-col justify-between overflow-x-hidden">
+
+    <!-- ================= TOP APP BAR ================= -->
+    <header id="top-nav-bar" class="hidden sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b-2 border-indigo-200 px-3 py-2.5 shadow-sm flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <button onclick="goToSubjectSelection()" class="bg-gradient-to-r from-amber-400 to-amber-500 active:scale-95 text-amber-950 font-black px-4 py-2 rounded-2xl shadow-sm text-sm sm:text-base flex items-center gap-1.5">
+                <span class="text-xl">🏠</span>
+                <span>المواد</span>
+            </button>
+            <div class="flex items-center gap-1.5 bg-rose-50 border-2 border-rose-300 px-3 py-1.5 rounded-2xl">
+                <span id="nav-child-avatar" class="text-2xl">👧</span>
+                <span id="nav-child-name" class="text-base font-black text-rose-950">رهف</span>
+                <span id="nav-child-grade" class="hidden sm:inline text-xs bg-indigo-100 text-indigo-900 px-2.5 py-0.5 rounded-full font-black">KG2 Lang</span>
+            </div>
+        </div>
+
+        <!-- 3-Minute Motor / Focus Break Timer -->
+        <div class="flex items-center gap-2 bg-sky-50 border-2 border-sky-300 px-3 py-1.5 rounded-full shadow-inner">
+            <span class="text-lg">⚡</span>
+            <span id="focus-clock-txt" class="text-base font-black text-sky-950 tracking-wider">03:00</span>
+            <button onclick="toggleFocusTimer()" id="focus-clock-btn" class="text-xs sm:text-sm bg-sky-600 hover:bg-sky-700 text-white px-3 py-1 rounded-full font-black">بدء</button>
+        </div>
+
+        <!-- Stars & Certificate & Audio -->
+        <div class="flex items-center gap-2">
+            <button onclick="showCertificateModal()" title="شهادة التقدير الرسمية" class="bg-emerald-100 hover:bg-emerald-200 border-2 border-emerald-400 text-emerald-950 text-xs sm:text-sm font-black px-3 py-2 rounded-2xl flex items-center gap-1">
+                <span class="text-lg">🎓</span>
+                <span class="hidden md:inline font-black">الشهادة</span>
+            </button>
+            <button onclick="playDadCheerAudio()" title="استمعي لصوت بابا" class="bg-purple-100 hover:bg-purple-200 border-2 border-purple-400 text-purple-950 text-sm font-black px-3 py-2 rounded-2xl flex items-center gap-1">
+                <span class="text-xl">🎙️</span>
+            </button>
+            <div onclick="openTreasureModal()" class="cursor-pointer active:scale-95 flex items-center gap-1.5 bg-gradient-to-r from-amber-300 to-yellow-400 text-amber-950 font-black px-3.5 py-1.5 rounded-2xl border-2 border-yellow-500 shadow-sm">
+                <span class="text-lg">⭐</span>
+                <span id="nav-stars-count" class="text-base font-black">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ================= MAIN CONTAINER ================= -->
+    <main class="flex-1 flex flex-col items-center justify-center p-3.5 max-w-xl mx-auto w-full">
+
+        <!-- 1. REGISTRATION & ONBOARDING -->
+        <section id="view-landing" class="w-full flex flex-col items-center justify-center py-2">
+            <div class="text-center mb-4">
+                <div class="inline-block p-4 bg-gradient-to-tr from-indigo-100 via-amber-100 to-pink-100 rounded-full shadow-xl border-4 border-amber-300 float-bubble mb-2">
+                    <span class="text-6xl">🎓</span>
+                </div>
+                <h1 class="text-3xl sm:text-4xl font-black text-indigo-950 tracking-tight">Raheef Interactive Academy</h1>
+                <h2 class="text-xl sm:text-2xl font-black text-pink-600 mt-1">أهلاً بكم في منصة رهف لمدارس اللغات</h2>
+                <p class="text-base text-slate-700 font-bold mt-1.5 max-w-md mx-auto leading-relaxed">
+                    منهاج تفاعلي متقدم مصمم لمرحلة (KG2 Language Schools) بخطوط كبيرة وواضحة جداً لتنمية مهارات الفونكس، الماث، واللغة العربية.
+                </p>
+            </div>
+
+            <div class="w-full bg-white/95 backdrop-blur-sm border-4 border-indigo-300 rounded-3xl p-6 shadow-2xl flex flex-col gap-4">
+                <div>
+                    <label class="block text-base font-black text-slate-800 mb-1.5 flex items-center gap-2">
+                        <span class="text-2xl">👧</span>
+                        <span>اسم البطل أو البطلة (Student's Name):</span>
+                    </label>
+                    <input type="text" id="reg-name-input" value="رهف" placeholder="مثلاً: رهف / Rahaf" class="w-full bg-indigo-50 border-2 border-indigo-400 focus:border-indigo-600 rounded-2xl px-4 py-3 text-lg font-black text-slate-900 outline-none text-center shadow-inner">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-black text-slate-800 mb-1">المرحلة الدراسية (Grade):</label>
+                        <select id="reg-grade-select" class="w-full bg-slate-50 border-2 border-slate-400 rounded-2xl px-3 py-2.5 text-base font-black text-slate-900 outline-none text-center">
+                            <option value="KG2 Language">KG2 Language School</option>
+                            <option value="KG1 Language">KG1 Language School</option>
+                            <option value="Primary 1">Primary 1 (Grade 1)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-black text-slate-800 mb-1">رقم واتساب المتابعة:</label>
+                        <input type="tel" id="reg-phone-input" placeholder="01xxxxxxxxx" class="w-full bg-emerald-50 border-2 border-emerald-400 focus:border-emerald-600 rounded-2xl px-3 py-2.5 text-base font-black text-slate-900 outline-none text-center shadow-inner" dir="ltr">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-black text-slate-800 mb-2">اختاري الشخصية الرمزية (Explorer Avatar):</label>
+                    <div class="grid grid-cols-4 gap-2.5 text-center" id="avatar-selector-box">
+                        <div onclick="selectAvatar('👧', this)" class="avatar-option avatar-selected border-2 border-slate-300 rounded-2xl p-2.5 cursor-pointer bg-slate-50 transition">
+                            <span class="text-4xl">👧</span>
+                            <span class="block text-xs font-black text-slate-700 mt-1">Princess</span>
+                        </div>
+                        <div onclick="selectAvatar('🚀', this)" class="avatar-option border-2 border-slate-300 rounded-2xl p-2.5 cursor-pointer bg-slate-50 transition">
+                            <span class="text-4xl">🚀</span>
+                            <span class="block text-xs font-black text-slate-700 mt-1">Astronaut</span>
+                        </div>
+                        <div onclick="selectAvatar('🦁', this)" class="avatar-option border-2 border-slate-300 rounded-2xl p-2.5 cursor-pointer bg-slate-50 transition">
+                            <span class="text-4xl">🦁</span>
+                            <span class="block text-xs font-black text-slate-700 mt-1">Explorer</span>
+                        </div>
+                        <div onclick="selectAvatar('🦅', this)" class="avatar-option border-2 border-slate-300 rounded-2xl p-2.5 cursor-pointer bg-slate-50 transition">
+                            <span class="text-4xl">🦅</span>
+                            <span class="block text-xs font-black text-slate-700 mt-1">Falcon</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button onclick="submitRegistration()" class="pop-button w-full bg-gradient-to-r from-indigo-600 via-pink-600 to-amber-500 text-white font-black py-4 rounded-2xl shadow-xl border-2 border-white text-xl flex items-center justify-center gap-2">
+                        <span>ابدأ رحلة التعلم | Start Learning</span>
+                        <span class="text-2xl">🚀✨</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. MAIN SUBJECTS DASHBOARD -->
+        <section id="view-dashboard" class="hidden w-full flex-col gap-4 py-2">
+            <div class="bg-white/95 border-2 border-indigo-200 rounded-3xl p-5 shadow-sm text-center">
+                <span id="dash-avatar-badge" class="text-5xl float-bubble inline-block">👧</span>
+                <h2 id="dash-greeting-txt" class="text-2xl sm:text-3xl font-black text-slate-900 mt-1">Welcome Hero Rahaf! 🌟</h2>
+                <p id="dash-greeting-sub" class="text-base text-indigo-700 font-bold mt-1">KG2 Language School Curriculum • Oxford & Jolly Phonics Standards</p>
+            </div>
+
+            <!-- Subject 1: English Language School Hub -->
+            <div onclick="openSubjectSection('english')" class="card-3d bg-gradient-to-r from-sky-500 via-indigo-600 to-indigo-700 text-white p-5 rounded-3xl shadow-xl border-4 border-white cursor-pointer flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="bg-white/20 text-4xl w-16 h-16 rounded-2xl flex items-center justify-center font-black shadow-inner border border-white/40">
+                        🇬🇧
+                    </div>
+                    <div>
+                        <span class="text-xs bg-sky-900/80 px-2.5 py-0.5 rounded-full font-black">Language School Primary Track</span>
+                        <h3 class="text-xl font-black mt-1">English (Jolly Phonics & CVC)</h3>
+                        <p class="text-sm text-sky-100 font-bold mt-0.5">Short Vowels, Blending Lab, Sight Words, & b/d Fixer</p>
+                    </div>
+                </div>
+                <span class="text-3xl bg-white/20 w-12 h-12 rounded-full flex items-center justify-center">👈</span>
+            </div>
+
+            <!-- Subject 2: Math Hub (English Medium) -->
+            <div onclick="openSubjectSection('math')" class="card-3d bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 text-white p-5 rounded-3xl shadow-xl border-4 border-white cursor-pointer flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="bg-white/20 text-4xl w-16 h-16 rounded-2xl flex items-center justify-center font-black shadow-inner border border-white/40">
+                        🔢
+                    </div>
+                    <div>
+                        <span class="text-xs bg-orange-900/80 px-2.5 py-0.5 rounded-full font-black">English Medium Math Track</span>
+                        <h3 class="text-xl font-black mt-1">Math & Arithmetic Kingdom</h3>
+                        <p class="text-sm text-amber-100 font-bold mt-0.5">Numbers 1-20 in Words, Sides & Corners Lab, Mirror Buster</p>
+                    </div>
+                </div>
+                <span class="text-3xl bg-white/20 w-12 h-12 rounded-full flex items-center justify-center">👈</span>
+            </div>
+
+            <!-- Subject 3: Arabic Curriculum (منهج تواصل KG2) -->
+            <div onclick="openSubjectSection('arabic')" class="card-3d bg-gradient-to-r from-teal-500 via-emerald-600 to-teal-700 text-white p-5 rounded-3xl shadow-xl border-4 border-white cursor-pointer flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="bg-white/20 text-4xl w-16 h-16 rounded-2xl flex items-center justify-center font-black shadow-inner border border-white/40">
+                        🇸🇦
+                    </div>
+                    <div>
+                        <span class="text-xs bg-emerald-900/80 px-2.5 py-0.5 rounded-full font-black">منهج تواصل التأسيسي</span>
+                        <h3 class="text-xl font-black mt-1">اللغة العربية (٢٨ حرفاً كاملاً)</h3>
+                        <p class="text-sm text-teal-100 font-bold mt-0.5">المسار الصارم من اليمين، مواضع الحرف، الحركات، والترديد الصوتي</p>
+                    </div>
+                </div>
+                <span class="text-3xl bg-white/20 w-12 h-12 rounded-full flex items-center justify-center">👈</span>
+            </div>
+
+            <!-- Bottom utility actions -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
+                <button onclick="showCertificateModal()" class="pop-button bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black py-4 rounded-2xl text-base flex items-center justify-center gap-2 shadow-md">
+                    <span class="text-2xl">🎓</span>
+                    <span>شهادة التقدير الرسمية للمدرسة</span>
+                </button>
+                <button onclick="openParentModal()" class="pop-button bg-purple-600 text-white font-black py-4 rounded-2xl text-base flex items-center justify-center gap-2 shadow-md">
+                    <span class="text-2xl">🎙️</span>
+                    <span>استوديو صوت بابا محمود</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- 3. LEVEL-BASED SUBJECT DIRECTORY -->
+        <section id="view-subject-games-list" class="hidden w-full flex-col gap-3.5">
+            <div class="flex items-center justify-between bg-white p-4 rounded-2xl border-2 border-indigo-200 shadow-sm">
+                <button onclick="goToSubjectSelection()" class="text-base bg-slate-100 px-4 py-2 rounded-xl font-black text-slate-800">⬅️ المواد</button>
+                <div class="text-center">
+                    <h3 id="subject-menu-title" class="font-black text-lg text-slate-900">محتوى المنهج</h3>
+                    <p class="text-xs text-indigo-700 font-bold">Curriculum Levels & Interactive Games</p>
+                </div>
+                <span id="subject-menu-icon" class="text-4xl">📚</span>
+            </div>
+
+            <div id="games-cards-container" class="flex flex-col gap-3.5">
+                <!-- Dynamically populated activities -->
+            </div>
+        </section>
+
+        <!-- ================= INDIVIDUAL ACTIVITY ARENAS ================= -->
+
+        <!-- GAME 1: Handwriting Tracing Canvas -->
+        <section id="arena-tracing" class="hidden w-full flex-col items-center">
+            <div class="w-full bg-white border-2 border-emerald-400 rounded-2xl p-3 mb-2 shadow-sm text-center">
+                <div class="flex justify-between items-center">
+                    <span id="trace-title" class="font-black text-emerald-950 text-base">مسار الكتابة السليم</span>
+                    <button onclick="cycleTraceItem()" class="text-sm bg-emerald-100 text-emerald-950 px-3.5 py-1.5 rounded-full font-black">الحرف التالي ⏩</button>
+                </div>
+                <div class="mt-2 text-sm font-bold text-slate-800 flex justify-center items-center gap-2">
+                    <span class="bg-green-100 text-green-900 px-3 py-1 rounded-full font-black">🌟 Start Here (النجمة الخضراء)</span>
+                    <span>➡️</span>
+                    <span class="bg-rose-100 text-rose-900 px-3 py-1 rounded-full font-black">🏁 Finish Line</span>
+                </div>
+            </div>
+
+            <div class="relative w-full aspect-square max-w-[340px] bg-white rounded-3xl border-4 border-emerald-400 shadow-2xl overflow-hidden canvas-touch-none">
+                <canvas id="activeCanvas" class="w-full h-full block"></canvas>
+                <div id="trace-win-overlay" class="absolute inset-0 bg-emerald-500/90 flex flex-col items-center justify-center text-white font-black opacity-0 pointer-events-none transition-opacity duration-300">
+                    <span class="text-6xl animate-bounce">🌟</span>
+                    <span class="text-2xl mt-2">Excellent Job! ممتازة يا رهف</span>
+                </div>
+            </div>
+
+            <div class="flex gap-2 w-full mt-3">
+                <button onclick="clearTraceCanvas()" class="flex-1 bg-amber-300 active:bg-amber-400 text-amber-950 font-black py-3 rounded-2xl text-base">مسح 🧼</button>
+                <button onclick="playDadCheerAudio()" class="flex-1 bg-purple-500 text-white font-black py-3 rounded-2xl text-base">صوت بابا 🗣️</button>
+                <button onclick="returnToActiveSubjectMenu()" class="bg-slate-200 text-slate-800 font-black px-5 py-3 rounded-2xl text-base">رجوع</button>
+            </div>
+        </section>
+
+        <!-- GAME 2: Letter Positions with Images -->
+        <section id="arena-positions" class="hidden w-full flex-col items-center">
+            <div class="w-full bg-white border-2 border-teal-400 rounded-2xl p-3 mb-2 text-center shadow-sm">
+                <h3 class="font-black text-teal-950 text-lg">مواضع الحرف في الكلمة 📍</h3>
+                <p id="pos-instructions" class="text-sm text-teal-800 font-bold mt-1">اختاري شكل الحرف المناسب في الموضع المطلوب:</p>
+            </div>
+
+            <div class="w-full bg-teal-50 border-2 border-teal-200 rounded-3xl p-5 flex flex-col items-center my-2 text-center">
+                <div id="pos-image-badge" class="text-7xl mb-2">🐄</div>
+                <div id="pos-word-display" class="text-4xl font-black text-teal-950 my-2 bg-white px-6 py-2.5 rounded-2xl border-2 border-teal-300 shadow-sm">
+                    ...ـقَرَة (بقرة)
+                </div>
+            </div>
+
+            <div id="pos-choices-box" class="grid grid-cols-3 gap-3 w-full mt-2"></div>
+
+            <div class="w-full text-center mt-4">
+                <button onclick="returnToActiveSubjectMenu()" class="text-base bg-slate-200 px-5 py-2.5 rounded-xl font-black text-slate-800">رجوع لقائمة العربي</button>
+            </div>
+        </section>
+
+        <!-- GAME 3: Harakat & Sukoon Train -->
+        <section id="arena-harakat" class="hidden w-full flex-col items-center">
+            <div class="w-full bg-white border-2 border-teal-400 rounded-2xl p-3 mb-2 text-center shadow-sm">
+                <h3 class="font-black text-teal-950 text-lg">قطار الحركات القصيرة والسكون 🚂</h3>
+                <p class="text-sm text-teal-800 font-bold mt-1">ما هي حركة الحرف في الصندوق؟</p>
+            </div>
+
+            <div class="w-full bg-teal-50 border-2 border-dashed border-teal-300 rounded-3xl p-6 flex flex-col items-center my-2">
+                <div class="text-7xl font-black text-teal-900 bg-white w-28 h-28 rounded-2xl shadow-lg border-2 border-teal-300 flex items-center justify-center" id="harakat-char-display">
+                    بَ
+                </div>
+                <button onclick="pronounceCurrentHarakat()" class="mt-4 bg-teal-600 active:scale-95 text-white font-black px-5 py-2.5 rounded-full text-base shadow flex items-center gap-2">
+                    <span>اسمعي النطق</span> <span class="text-xl">🔊</span>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 w-full mt-2" id="harakat-options-grid"></div>
+
+            <div class="w-full text-center mt-4">
+                <button onclick="returnToActiveSubjectMenu()" class="text-base bg-slate-200 px-5 py-2.5 rounded-xl font-black text-slate-800">رجوع</button>
+            </div>
+        </section>
+
+        <!-- GAME 4: Madd Journey -->
+        <section id="arena-madd" class="hidden w-full flex-col items-center">
+            <div class="w-full bg-white border-2 border-sky-400 rounded-2xl p-3 mb-2 text-center shadow-sm">
+                <h3 class="font-black text-sky-950 text-lg">رحلة المدود الثلاثة 🏝️</h3>
+                <p class="text-sm text-sky-800 font-bold mt-1">ما نوع المد في هذه الكلمة؟</p>
+            </div>
+
+            <div class="w-full bg-sky-50 border-4 border-sky-200 rounded-3xl p-6 flex flex-col items-center my-2">
+                <div id="madd-icon-pic" class="text-7xl mb-2">☁️</div>
+                <span id="madd-word-txt" class="text-5xl font-black text-sky-950">سَمَاء</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full mt-2">
+                <button onclick="verifyMaddSelection('ألف')" class="pop-button bg-amber-400 text-amber-950 font-black py-4 rounded-2xl shadow text-lg border-2 border-white">مد ألف (ـا)</button>
+                <button onclick="verifyMaddSelection('واو')" class="pop-button bg-emerald-400 text-emerald-950 font-black py-4 rounded-2xl shadow text-lg border-2 border-white">مد واو (ـو)</button>
+                <button onclick="verifyMaddSelection('ياء')" class="pop-button bg-purple-400 text-purple-950 font-black py-4 rounded-2xl shadow text-lg border-2 border-white">مد ياء (ـي)</button>
+            </div>
+
+            <div class="w-full text-center mt-4">
+                <button onclick="returnToActiveSubjectMenu()" class="text-base bg-slate-200 px-5 py-2.5 rounded-xl font-black text-slate-800">رجوع</button>
+            </div>
+        </section>
+
+        <!-- GAME 5: "ردّد معي" (Listen & Repeat Lab) -->
+        <section id="arena-repeat-lab" class="hidden w-full flex-col items-center">
+            <div class="w-full bg-white border-2 border-purple-400 rounded-2xl p-3 mb-2 text-center shadow-sm">
+                <h3 class="font-black text-purple-950 text-lg">مختبر القراءة التفاعلية: "ردّدي معي يا بطلة" 🎙️📖</h3>
+                <p class="text-sm text-purple-800 font-bold mt-1">اسمعي الكلمة مجزأة، ثم ردديها بصوتك واكسبي نجوماً!</p>
+            </div>
+
+            <div class="w-full bg-purple-50 border-4 border-purple-200 rounded-3xl p-5 flex flex-col items-center my-2">
+                <div id="repeat-pic" class="text-7xl mb-2">📖</div>
+                
+                <div id="repeat-syllables-badges" class="flex items-center justify-center gap-2 mb-3">
+                    <span class="bg-purple-200 text-purple-950 px-4 py-1.5 rounded-xl text-3xl font-black">كَـ</span>
+                    <span class="text-2xl font-black text-purple-500">+</span>
+                    <span class="bg-purple-200 text-purple-950 px-4 py-1.5 rounded-xl text-3xl font-black">تَـ</span>
+                    <span class="text-2xl font-black text-purple-500">+</span>
+                    <span class="bg-purple-200 text-purple-950 px-4 py-1.5 rounded-xl text-3xl font-black">بَ</span>
+                </div>
+
+                <div id="repeat-full-word" class="text-4xl font-black text-purple-950 mb-3 bg-white px-7 py-2 rounded-2xl border-2 border-purple-300">
+                    كَتَبَ
+                </div>
+
+                <div class="flex gap-3 w-full">
+                    <button onclick="pronounceRepeatTarget()" class="flex-1 pop-button bg-purple-600 text-white font-black py-3.5 rounded-2xl text-base flex items-center justify-center gap-2 shadow">
+                        <span>اسمعي النطق 🔊</span>
+                    </button>
+                    <button id="child-mic-btn" onclick="simulateChildRepeat()" class="flex-1 pop-button bg-pink-500 text-white font-black py-3.5 rounded-2xl text-base flex items-center justify-center gap-2 shadow">
+                        <span>ردّدي الآن 🎙️</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="repeat-feedback-box" class="w-full bg-white border-2 border-slate-300 rounded-2xl p-3 text-center text-sm font-black text-slate-700">
+                اضغطي على "اسمعي النطق"، ثم رددي بصوتك الجميل!
+            </div>
+
+            <div class="flex gap-2 w-full mt-3">
+                <button onclick="nextRepeatWord()" class="flex-1 bg-amber-400 text-amber-950 font-black py-3 rounded-2xl text-base shadow">الكلمة التالية ⏩</button>
+                <button onclick="returnToActiveSubjectMenu()" class="bg-slate-200 text-slate-800 font-black px-5 py-3 rounded-2xl text-base">رجوع</button>
+            </div>
+        </section>
+
+        <!-- GAME 6: Jolly Phonics Sounds Lab -->
+        <section id="arena-phonics" class="hidden w-full flex-col items-center">
+            <div class="w-full bg-white border-2 border-indigo-400 rounded-2xl p-3 mb-2 text-center shadow-sm">
+                <h3 class="font-black text-indigo-950 text-lg">Jolly Phonics & Letter Sounds Lab 🎵</h3>
+                <p class="text-sm text-indigo-800 font-bold mt-1">Listen to the synthetic phonics sound and pick the matching letter:</p>
+            </div>
+
+            <div class="w-full bg-indigo-50 border-2 border-indigo-200 rounded-3xl p-5 flex flex-col items-center my-2">
+                <button onclick="playPhonicsAudio()" class="w-24 h-24 rounded-full bg-indigo-600 text-white text-4xl shadow-xl flex items-center justify-center pop-button mb-3">
+                    🔊
+                </button>
+                <span class="text-base font-black text-indigo-950">Tap to hear Phonics Sound</span>
+                <span id="phonics-word-hint" class="text-base text-slate-700 font-black mt-1">Short Vowel /æ/ as in Apple 🍎</span>
+            </div>
+
+            <div id="phonics-choices-grid" class="grid grid-cols-3 gap-3.5 w-full mt-2" dir="ltr"></div>
+
+            <div class="w-full text-center mt-4">
+                <button onclick="returnToActiveSubjectMenu()" class="text-base bg-slate-200 px-5 py-2.5 rounded-xl font-black text-slate-800">Back to English Track</button>
+            </div>
+        </section>
+
+        <!-- GAME 7: Vowels Sorter (a, e, i, o, u) -->
+        <section id="arena-vowels" class="hidden w-full flex-col items-center">
+            <div class="w-full bg-white border-2 border-sky-400 rounded-2xl p-3 mb-2 text-center shadow-sm">
+                <h3 class="font-black text-sky-950 text-lg">Short Vowels Sorter (a, e, i, o, u) 🧺</h3>
+                <p class="text-sm text-sky-800 font-bold mt-1">Classify the letter as Vowel or Consonant quickly!</p>
+            </div>
+
+            <div class="w-full bg-sky-50 rounded-3xl p-5 flex flex-col items-center my-2 border-2 border-sky-200">
+                <span class="text-sm font-black text-slate-600">Target Letter:</span>
+                <div id="vowels-active-char" class="text-7xl font-black text-indigo-700 bg-white w-28 h-28 rounded-2xl flex items-center justify-center shadow-lg border-2 border-indigo-300 my-2">
+                    A
+                </div>
+                <div class="flex flex-col sm:flex-row gap-3 w-full mt-2">
+                    <button onclick="verifyVowelChoice(true)" class="pop-button flex-1 bg-emerald-500 text-white font-black py-4 rounded-2xl shadow border-2 border-white text-lg">
+                        Vowel (حرف متحرك) 🍎
+                    </button>
+                    <button onclick="verifyVowelChoice(false)" class="pop-button flex-1 bg-slate-600 text-white font-black py-4 rounded-2xl shadow border-2 border-white text-lg">
+                        Consonant (حرف ساكن) 🧱
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center w-full px-2 mt-2">
+                <span id="vowels-streak-counter" class="text-base font-black text-indigo-900">Streak: 0 🔥</span>
+                <button onclick="returnToActiveSubjectMenu()" class="text-base bg-slate-200 px-5 py-2 rounded-xl font-black text-slate-800">Back</button>
+            </div>
+        </section>
+
+        <!-- GAME 8: Reversals Fixer (b vs d, p vs q) -->
+        <section id="arena-reversals" class="hidden w-full flex-col items-center">
+            <div class="w-full bg-white border-2 border-pink-400 rounded-2xl p-3 mb-2 text-center shadow-sm">
+                <h3 id="reversals-arena-title" class="font-black text-pink-950 text-lg">Mirror Letters Fixer (b vs d) 🪞</h3>
+                <p id="reversals-arena-hint" class="text-sm text-pink-800 font-bold mt-1">Pop the correct letter bubbles to fix mirror reversals!</p>
+            </div>
+
+            <div id="reversals-bubble-area" class="w-full min-h-[280px] bg-pink-50 border-4 border-pink-300 rounded-3xl p-4 flex flex-wrap justify-around items-center gap-4"></div>
+
+            <div class="flex justify-between items-center w-full px-2 mt-3">
+                <span id="reversals-score-display" class="text-base font-black text-pink-900">Score: 0 🎯</span>
+                <button onclick="returnToActiveSubjectMenu()" class="text-base bg-slate-200 px-5 py-2 rounded-xl font-black text-slate-800">Back</button>
+            </div>
+        </section>
+
+        <!-- GAME 9: CVC Words & Blending Lab -->
+        <section id="arena-pic-bank" class="hidden w-full flex-col items-center">
+            <div class="w-full bg-white border-2 border-amber-400 rounded-2xl p-3 mb-2 text-center shadow-sm">
+                <h3 class="font-black text-amber-950 text-lg">CVC Word Builder & Blending Lab 🎨</h3>
+                <p class="text-sm text-amber-800 font-bold mt-1">Blend the phonics sounds: Consonant-Vowel-Consonant!</p>
+            </div>
+
+            <div class="w-full bg-amber-50 border-2 border-amber-200 rounded-3xl p-5 flex flex-col items-center my-2 text-center">
+                <div id="picbank-emoji" class="text-7xl mb-1">🐱</div>
+                <button onclick="pronounceCurrentCVC()" class="my-2 bg-amber-500 text-white font-black text-base px-5 py-2 rounded-full shadow flex items-center gap-1.5">
+                    <span>Listen & Blend 🔊</span>
+                </button>
+                <div id="picbank-word-box" class="text-4xl font-black text-amber-950 mt-1 bg-white px-6 py-2 rounded-xl border-2 border-amber-300 tracking-widest" dir="ltr">
+                    C - A - T
+                </div>
+            </div>
+
+            <div id="picbank-options-box" class="grid grid-cols-2 gap-3.5 w-full mt-2" dir="ltr"></div>
+
+            <div class="w-full text-center mt-4">
+                <button onclick="returnToActiveSubjectMenu()" class="text-base bg-slate-200 px-5 py-2.5 rounded-xl font-black text-slate-800">Back</button>
+            </div>
+        </section>
+
+        <!-- GAME: Sight Words Speed Challenge -->
+        <section id="arena-sight-words" class="hidden w-full flex-col items-center">
+            <div class="w-full bg-white border-2 border-purple-400 rounded-2xl p-3 mb-2 text-center shadow-sm">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-black text-purple-950 text-lg">Sight Words Challenge (High Frequency) ⚡</h3>
+                    <button onclick="pronounceSightWord()" class="bg-purple-100 text-purple-950 px-3.5 py-1.5 rounded-full text-sm font-black flex items-center gap-1">
+                        <span>Listen 🔊</span>
+                    </button>
+                </div>
+                <p class="text-sm text-purple-800 font-bold mt-1">Tap the spoken sight word as fast as you can!</p>
+            </div>
+
+            <div class="w-full bg-purple-50 border-4 border-purple-200 rounded-3xl p-6 flex flex-col items-center my-2">
+                <span class="text-base font-black text-slate-600">Listen to the word and tap below:</span>
+                <div id="sight-word-target-sound" class="text-5xl font-black text-purple-950 my-3">
+                    🔊 ???
+                </div>
+            </div>
+
+            <div id="sight-words-choices-box" class="grid grid-cols-2 gap-3.5 w-full mt-2" dir="ltr"></div>
+
+            <div class="w-full text-center mt-4">
+                <button onclick="returnToActiveSubjectMenu()" class="text-base bg-slate-200 px-5 py-2.5 rounded-xl font-black text-slate-800">Back</button>
+            </div>
+        </section>
+
+        <!-- GAME 10: Numbers in Words (1 to 20 Complete Coverage) -->
+        <section id="arena-number-words" class="hidden w-full flex-col items-center">
+            <div class="w-full bg-white border-2 border-amber-400 rounded-2xl p-3 mb-2 text-center shadow-sm">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-black text-amber-950 text-lg">Numbers in Words (1 to 20 Spelling) 🔤🔢</h3>
+                    <button onclick="pronounceNumberWord()" class="bg-amber-100 text-amber-950 px-3.5 py-1.5 rounded-full text-sm font-black flex items-center gap-1 shadow-sm">
+                        <span>Listen 🔊</span>
+                    </button>
+                </div>
+                <p id="numwords-instruction-txt" class="text-sm text-amber-900 font-bold mt-1">Assemble the letter tiles in the correct order:</p>
+            </div>
+
+            <div class="w-full bg-gradient-to-tr from-amber-50 to-orange-50 border-4 border-amber-300 rounded-3xl p-4 flex flex-col items-center my-1 shadow-inner">
+                <div class="flex items-center justify-center gap-4">
+                    <span id="numwords-digit-display" class="text-6xl font-black text-amber-600 bg-white w-20 h-20 rounded-2xl flex items-center justify-center shadow-md border-2 border-amber-300">
+                        1
+                    </span>
+                    <div id="numwords-visual-dots" class="flex flex-wrap max-w-[150px] gap-1.5 justify-center text-3xl">
+                        ⭐
+                    </div>
+                </div>
+
+                <div id="numwords-slots-tray" class="flex items-center justify-center gap-2 mt-4 min-h-[58px] w-full flex-wrap" dir="ltr"></div>
+            </div>
+
+            <div class="w-full my-2">
+                <div class="text-center text-sm font-black text-slate-600 mb-2">Tap the letters in sequence:</div>
+                <div id="numwords-letters-pool" class="flex items-center justify-center gap-2.5 flex-wrap" dir="ltr"></div>
+            </div>
+
+            <div id="numwords-quiz-choices" class="grid grid-cols-3 gap-2.5 w-full mt-2" dir="ltr"></div>
+
+            <div class="flex gap-2 w-full mt-3">
+                <button onclick="resetNumberWordRound()" class="flex-1 bg-amber-200 active:bg-amber-300 text-amber-950 font-black py-3 rounded-2xl text-sm shadow-sm">Reset 🧼</button>
+                <button onclick="nextNumberWordItem()" class="flex-1 bg-amber-500 active:bg-amber-600 text-white font-black py-3 rounded-2xl text-sm shadow-md">Next Number ⏩</button>
+                <button onclick="returnToActiveSubjectMenu()" class="bg-slate-200 text-slate-800 font-black px-5 py-3 rounded-2xl text-sm">Back</button>
+            </div>
+        </section>
+
+        <!-- GAME 11: Missing Numbers Sequence -->
+        <section id="arena-missing-numbers" class="hidden w-full flex-col items-center">
+            <div class="w-full bg-white border-2 border-orange-400 rounded-2xl p-3 mb-2 text-center shadow-sm">
+                <h3 class="font-black text-orange-950 text-lg">Number Patterns & Sequences 🚂</h3>
+                <p class="text-sm text-orange-800 font-bold mt-1">Find the missing number in the sequence:</p>
+            </div>
+
+            <div id="missing-nums-train" class="w-full bg-orange-50 border-2 border-orange-200 rounded-3xl p-5 flex items-center justify-center gap-3 my-2 text-3xl font-black text-orange-950" dir="ltr"></div>
+
+            <div id="missing-nums-choices" class="grid grid-cols-3 gap-3.5 w-full mt-3" dir="ltr"></div>
+
+            <div class="w-full text-center mt-4">
+                <button onclick="returnToActiveSubjectMenu()" class="text-base bg-slate-200 px-5 py-2.5 rounded-xl font-black text-slate-800">Back to Math</button>
+            </div>
+        </section>
+
+        <!-- GAME 12: Crocodile Comparison (> < =) -->
+        <section id="arena-crocodile" class="hidden w-full flex-col items-center">
+            <div class="w-full bg-white border-2 border-emerald-400 rounded-2xl p-3 mb-2 text-center shadow-sm">
+                <h3 class="font-black text-emerald-950 text-lg">Hungry Crocodile Math (> < =) 🐊</h3>
+                <p class="text-sm text-emerald-800 font-bold mt-1">The hungry croc always opens its mouth to the BIGGER number!</p>
+            </div>
+
+            <div class="w-full bg-emerald-50 border-4 border-emerald-200 rounded-3xl p-6 flex items-center justify-around my-2" dir="ltr">
+                <span id="croc-left-num" class="text-5xl font-black text-emerald-950 bg-white w-20 h-20 rounded-2xl flex items-center justify-center shadow">8</span>
+                <span id="croc-mouth-state" class="text-5xl font-black text-amber-600 bg-amber-100 w-20 h-20 rounded-2xl flex items-center justify-center border-2 border-amber-400">❓</span>
+                <span id="croc-right-num" class="text-5xl font-black text-emerald-950 bg-white w-20 h-20 rounded-2xl flex items-center justify-center shadow">4</span>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3.5 w-full mt-3" dir="ltr">
+                <button onclick="verifyCrocSign('>')" class="pop-button bg-emerald-500 text-white font-black py-4 rounded-2xl text-4xl shadow border-2 border-white">></button>
+                <button onclick="verifyCrocSign('=')" class="pop-button bg-sky-500 text-white font-black py-4 rounded-2xl text-4xl shadow border-2 border-white">=</button>
+                <button onclick="verifyCrocSign('<')" class="pop-button bg-emerald-500 text-white font-black py-4 rounded-2xl text-4xl shadow border-2 border-white"><</button>
+            </div>
+
+            <div class="w-full text-center mt-4">
+                <button onclick="returnToActiveSubjectMenu()" class="text-base bg-slate-200 px-5 py-2.5 rounded-xl font-black text-slate-800">Back</button>
+            </div>
+        </section>
+
+        <!-- GAME 13: Visual Math (Addition & Subtraction) -->
+        <section id="arena-visual-math" class="hidden w-full flex-col items-center">
+            <div class="w-full bg-white border-2 border-orange-400 rounded-2xl p-3 mb-2 text-center shadow-sm">
+                <h3 class="font-black text-orange-950 text-lg">Visual Addition & Subtraction 🍎➕🍊</h3>
+                <p class="text-sm text-orange-800 font-bold mt-1">Count the real objects and calculate the sum:</p>
+            </div>
+
+            <div class="w-full bg-orange-50 border-2 border-orange-200 rounded-3xl p-5 flex flex-col items-center my-2">
+                <div class="flex items-center justify-center gap-3 w-full text-3xl" dir="ltr">
+                    <div id="fruit-group-a" class="bg-white p-3 rounded-2xl border-2 border-orange-300 flex gap-1.5 text-4xl">🍎🍎</div>
+                    <span id="fruit-math-sign" class="font-black text-orange-600 text-4xl">+</span>
+                    <div id="fruit-group-b" class="bg-white p-3 rounded-2xl border-2 border-orange-300 flex gap-1.5 text-4xl">🍎</div>
+                </div>
+                <div class="mt-3 text-base font-black text-slate-700">How many fruits altogether?</div>
+            </div>
+
+            <div id="fruit-math-choices" class="grid grid-cols-3 gap-3.5 w-full mt-3" dir="ltr"></div>
+
+            <div class="w-full text-center mt-4">
+                <button onclick="returnToActiveSubjectMenu()" class="text-base bg-slate-200 px-5 py-2.5 rounded-xl font-black text-slate-800">Back</button>
+            </div>
+        </section>
+
+        <!-- GAME 14: JUMBO SHAPES & CORNERS / SIDES LAB -->
+        <section id="arena-shapes" class="hidden w-full flex-col items-center">
+            <div class="w-full bg-white border-2 border-teal-400 rounded-2xl p-3 mb-2 text-center shadow-sm">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-black text-teal-950 text-lg">Geometric Shapes, Sides & Corners Lab 📐</h3>
+                    <button onclick="pronounceShapeName()" class="bg-teal-100 text-teal-950 px-3.5 py-1.5 rounded-full text-sm font-black flex items-center gap-1 shadow-sm">
+                        <span>Pronounce 🔊</span>
+                    </button>
+                </div>
+                <p class="text-sm text-teal-800 font-bold mt-1">Tap the pulsing red corners to count them one by one!</p>
+            </div>
+
+            <div class="w-full bg-gradient-to-b from-teal-50 to-sky-50 border-4 border-teal-300 rounded-3xl p-5 flex flex-col items-center my-1 shadow-lg relative">
+                <div class="text-center mb-2">
+                    <span id="shape-name-en" class="text-3xl font-black text-teal-950 block tracking-wide" dir="ltr">Triangle</span>
+                    <span id="shape-name-ar" class="text-lg font-black text-slate-600">مُثَلَّث</span>
+                </div>
+
+                <!-- Giant SVG Visual Canvas with interactive clickable vertices -->
+                <div class="relative w-72 h-72 bg-white/95 rounded-3xl border-2 border-teal-200 shadow-inner flex items-center justify-center my-2">
+                    <svg id="shape-giant-svg" class="w-full h-full" viewBox="0 0 240 240">
+                        <!-- Polygons & vertices -->
+                    </svg>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 w-full mt-2">
+                    <div class="bg-white px-3 py-2.5 rounded-2xl border-2 border-teal-300 text-center shadow-sm">
+                        <span class="text-sm font-bold text-slate-600 block">Sides (الأضلاع):</span>
+                        <span id="shape-sides-count-badge" class="text-base font-black text-teal-800">3 Straight Sides</span>
+                    </div>
+                    <div class="bg-white px-3 py-2.5 rounded-2xl border-2 border-teal-300 text-center shadow-sm">
+                        <span class="text-sm font-bold text-slate-600 block">Corners (الأركان):</span>
+                        <span id="shape-corners-count-badge" class="text-base font-black text-teal-700">0 / 3 Corners</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-2 w-full mt-3">
+                <button onclick="prevShapeItem()" class="bg-slate-200 text-slate-800 font-black px-5 py-3 rounded-2xl text-sm">Previous ⏪</button>
+                <button onclick="nextShapeItem()" class="flex-1 bg-teal-500 text-white font-black py-3 rounded-2xl text-sm shadow-md">Next Shape ⏩</button>
+                <button onclick="returnToActiveSubjectMenu()" class="bg-slate-200 text-slate-800 font-black px-5 py-3 rounded-2xl text-sm">Back</button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ================= MODALS & POPUPS ================= -->
+
+    <!-- Dad's Recording Studio Modal -->
+    <div id="modal-parent-audio" class="fixed inset-0 bg-slate-900/70 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white border-4 border-purple-400 rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl">
+            <span class="text-5xl">🎙️</span>
+            <h3 class="text-2xl font-black text-purple-950 mt-2">استوديو صوت بابا محمود</h3>
+            <p class="text-sm text-slate-600 font-bold mt-1">سجل تشجيعك بصوتك الحقيقي ليسمعه طفلك عند كل فوز!</p>
+            
+            <div class="my-4 p-4 bg-purple-50 rounded-2xl border-2 border-purple-200 flex flex-col items-center">
+                <button id="btn-record-audio" onclick="toggleParentAudioRecording()" class="w-20 h-20 bg-rose-500 hover:bg-rose-600 text-white rounded-full flex items-center justify-center text-3xl shadow-lg border-4 border-white mb-2 pop-button">
+                    ⏺️
+                </button>
+                <span id="recording-status-lbl" class="text-sm font-black text-rose-700">اضغط للبدء بالتسجيل</span>
+            </div>
+
+            <div class="flex gap-2">
+                <button onclick="playDadCheerAudio()" class="flex-1 bg-purple-100 text-purple-950 font-black py-2.5 rounded-xl text-sm border border-purple-300">تجربة الصوت 🔊</button>
+                <button onclick="closeParentModal()" class="flex-1 bg-slate-200 text-slate-800 font-black py-2.5 rounded-xl text-sm">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Official Certificate Modal -->
+    <div id="modal-certificate" class="fixed inset-0 bg-slate-900/80 z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white border-8 border-indigo-500 rounded-3xl p-6 max-w-md w-full text-center shadow-2xl relative my-auto">
+            <button onclick="closeCertificateModal()" class="absolute top-3 left-3 bg-slate-100 w-8 h-8 rounded-full font-black text-slate-600">✕</button>
+
+            <div id="printable-certificate-card" class="p-4 bg-gradient-to-b from-amber-50 to-white rounded-2xl border-2 border-amber-300">
+                <div class="flex justify-between items-center border-b-2 border-amber-300 pb-2 mb-3">
+                    <span class="text-4xl">👑</span>
+                    <div>
+                        <h4 class="text-lg font-black text-indigo-950 uppercase tracking-widest">Certificate of Excellence</h4>
+                        <span class="text-xs font-bold text-amber-700">Official KG2 Language School Assessment</span>
+                    </div>
+                    <span class="text-4xl">🎓</span>
+                </div>
+
+                <p class="text-xs text-slate-600 font-bold">This certifies that our outstanding young hero:</p>
+                <h3 id="cert-child-name" class="text-3xl font-black text-rose-600 my-2">RAHAF (رهف)</h3>
+                <p class="text-xs text-slate-700 font-semibold leading-relaxed">
+                    Has successfully mastered synthetic Jolly Phonics, English Medium Numbers 1-20 in words, Sides & Corners analysis, and proper Arabic letter tracing with Zero Mirror-Reversals.
+                </p>
+
+                <div class="grid grid-cols-2 gap-2 my-4 text-xs font-black">
+                    <div class="bg-white p-2 rounded-xl border border-amber-300">
+                        <span class="text-slate-500 block">Total Stars</span>
+                        <span id="cert-stars-val" class="text-lg text-amber-600">120 ⭐</span>
+                    </div>
+                    <div class="bg-white p-2 rounded-xl border border-amber-300">
+                        <span class="text-slate-500 block">Performance</span>
+                        <span class="text-lg text-emerald-600">EXCELLENT (A+)</span>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-end pt-2 border-t border-amber-200 text-xs font-black text-slate-600">
+                    <div>Date: <span id="cert-date-val">2026/11/06</span></div>
+                    <div>Academy Stamp: 💮 Approved</div>
+                </div>
+            </div>
+
+            <div class="flex gap-2 mt-4">
+                <button onclick="window.print()" class="flex-1 bg-indigo-600 text-white font-black py-3 rounded-2xl text-base shadow flex items-center justify-center gap-1.5">
+                    <span>طباعة الشهادة للمدرسة</span> <span>🖨️</span>
+                </button>
+                <button onclick="closeCertificateModal()" class="bg-slate-200 text-slate-800 font-black px-5 py-3 rounded-2xl text-base">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Treasure Modal -->
+    <div id="modal-treasure" class="fixed inset-0 bg-slate-900/70 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white border-4 border-amber-400 rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl">
+            <span class="text-6xl float-bubble inline-block">🎁</span>
+            <h3 class="text-2xl font-black text-amber-950 mt-2">خزينة جوائز رهف</h3>
+            <p class="text-sm text-slate-600 font-bold mt-1">كل 10 نجوم تفتح لك لعبة جديدة وساماً سحرياً!</p>
+            <div id="trophies-display-grid" class="grid grid-cols-4 gap-2 my-4 text-3xl">
+                <span>🏅</span><span>🏆</span><span>🎨</span><span>🍦</span>
+            </div>
+            <button onclick="closeTreasureModal()" class="w-full bg-amber-400 hover:bg-amber-500 text-amber-950 font-black py-3 rounded-2xl text-base">رائع جداً!</button>
+        </div>
+    </div>
+
+    <!-- ================= APPLICATION LOGIC ENGINE ================= -->
+    <script>
+        /* ================= 1. GLOBAL STATE & DATA ================= */
+        const APP_STATE = {
+            childName: "رهف",
+            phone: "",
+            grade: "KG2 Language",
+            avatar: "👧",
+            stars: 0,
+            activeSubject: null,
+            timerInterval: null,
+            timerSeconds: 180,
+            timerRunning: false,
+            audioCtx: null,
+            dadAudioBlob: null,
+            mediaRecorder: null,
+            audioChunks: []
+        };
+
+        // --- Synthetic Phonics Sounds Library ---
+        const PHONICS_DATA = [
+            { sound: "æ", letter: "A", word: "Apple 🍎", hint: "/æ/ like Apple" },
+            { sound: "b", letter: "B", word: "Bat 🦇", hint: "/b/ like Bat" },
+            { sound: "k", letter: "C", word: "Cat 🐱", hint: "/k/ like Cat" },
+            { sound: "d", letter: "D", word: "Dog 🐶", hint: "/d/ like Dog" },
+            { sound: "e", letter: "E", word: "Egg 🥚", hint: "/e/ like Egg" },
+            { sound: "f", letter: "F", word: "Fish 🐟", hint: "/f/ like Fish" },
+            { sound: "g", letter: "G", word: "Goat 🐐", hint: "/g/ like Goat" },
+            { sound: "h", letter: "H", word: "Hat 🎩", hint: "/h/ like Hat" },
+            { sound: "ɪ", letter: "I", word: "Igloo 🧊", hint: "/ɪ/ like Igloo" },
+            { sound: "dʒ", letter: "J", word: "Jam 🍓", hint: "/dʒ/ like Jam" }
+        ];
+
+        // --- CVC Blending Library ---
+        const CVC_DATA = [
+            { emoji: "🐱", word: "CAT", choices: ["CAT", "DOG", "BAT"] },
+            { emoji: "🛏️", word: "BED", choices: ["BED", "RED", "FED"] },
+            { emoji: "☀️", word: "SUN", choices: ["SUN", "RUN", "FUN"] },
+            { emoji: "📌", word: "PIN", choices: ["PIN", "WIN", "BIN"] },
+            { emoji: "🍲", word: "POT", choices: ["POT", "HOT", "NOT"] },
+            { emoji: "🐶", word: "DOG", choices: ["DOG", "FOG", "LOG"] },
+            { emoji: "🦊", word: "FOX", choices: ["FOX", "BOX", "SIX"] }
+        ];
+
+        // --- Sight Words (High Frequency KG2) ---
+        const SIGHT_WORDS = ["THE", "AND", "CAN", "SEE", "YOU", "IS", "IT", "BIG", "FOR", "MY"];
+
+        // --- Complete Numbers 1 to 20 in Words (English Medium) ---
+        const NUMBERS_IN_WORDS = [
+            { num: 1, word: "ONE", dots: "🍎" },
+            { num: 2, word: "TWO", dots: "🍎🍎" },
+            { num: 3, word: "THREE", dots: "⭐⭐⭐" },
+            { num: 4, word: "FOUR", dots: "🚗🚗🚗🚗" },
+            { num: 5, word: "FIVE", dots: "🖐️🖐️🖐️🖐️🖐️" },
+            { num: 6, word: "SIX", dots: "🎈🎈🎈🎈🎈🎈" },
+            { num: 7, word: "SEVEN", dots: "🌸🌸🌸🌸🌸🌸🌸" },
+            { num: 8, word: "EIGHT", dots: "🍬🍬🍬🍬🍬🍬🍬🍬" },
+            { num: 9, word: "NINE", dots: "🍓🍓🍓🍓🍓🍓🍓🍓🍓" },
+            { num: 10, word: "TEN", dots: "🔟🔟🔟🔟🔟🔟🔟🔟🔟🔟" },
+            { num: 11, word: "ELEVEN", dots: "⚽⚽⚽⚽⚽⚽⚽⚽⚽⚽⚽" },
+            { num: 12, word: "TWELVE", dots: "🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟" },
+            { num: 13, word: "THIRTEEN", dots: "🍪🍪🍪🍪🍪🍪🍪🍪🍪🍪🍪🍪🍪" },
+            { num: 14, word: "FOURTEEN", dots: "🧁🧁🧁🧁🧁🧁🧁🧁🧁🧁🧁🧁🧁🧁" },
+            { num: 15, word: "FIFTEEN", dots: "🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩" },
+            { num: 16, word: "SIXTEEN", dots: "🍇🍇🍇🍇🍇🍇🍇🍇🍇🍇🍇🍇🍇🍇🍇🍇" },
+            { num: 17, word: "SEVENTEEN", dots: "🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒" },
+            { num: 18, word: "EIGHTEEN", dots: "🥪🥪🥪🥪🥪🥪🥪🥪🥪🥪🥪🥪🥪🥪🥪🥪🥪🥪" },
+            { num: 19, word: "NINETEEN", dots: "🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀" },
+            { num: 20, word: "TWENTY", dots: "💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎" }
+        ];
+
+        // --- Jumbo Shapes, Sides & Clickable Corners ---
+        const SHAPES_DATA = [
+            {
+                nameEn: "Triangle",
+                nameAr: "مُثَلَّث",
+                sidesText: "3 Straight Sides",
+                totalCorners: 3,
+                svg: `
+                    <polygon points="120,30 20,200 220,200" fill="#fde047" stroke="#ca8a04" stroke-width="6"/>
+                    <circle id="corner-0" onclick="tapCorner(0, 3)" cx="120" cy="30" r="16" fill="#ef4444" stroke="#fff" stroke-width="4" class="cursor-pointer animate-pulse"/>
+                    <circle id="corner-1" onclick="tapCorner(1, 3)" cx="20" cy="200" r="16" fill="#ef4444" stroke="#fff" stroke-width="4" class="cursor-pointer animate-pulse"/>
+                    <circle id="corner-2" onclick="tapCorner(2, 3)" cx="220" cy="200" r="16" fill="#ef4444" stroke="#fff" stroke-width="4" class="cursor-pointer animate-pulse"/>
+                `
+            },
+            {
+                nameEn: "Square",
+                nameAr: "مُرَبَّع",
+                sidesText: "4 Equal Sides",
+                totalCorners: 4,
+                svg: `
+                    <rect x="40" y="40" width="160" height="160" rx="10" fill="#93c5fd" stroke="#2563eb" stroke-width="6"/>
+                    <circle id="corner-0" onclick="tapCorner(0, 4)" cx="40" cy="40" r="16" fill="#ef4444" stroke="#fff" stroke-width="4" class="cursor-pointer animate-pulse"/>
+                    <circle id="corner-1" onclick="tapCorner(1, 4)" cx="200" cy="40" r="16" fill="#ef4444" stroke="#fff" stroke-width="4" class="cursor-pointer animate-pulse"/>
+                    <circle id="corner-2" onclick="tapCorner(2, 4)" cx="200" cy="200" r="16" fill="#ef4444" stroke="#fff" stroke-width="4" class="cursor-pointer animate-pulse"/>
+                    <circle id="corner-3" onclick="tapCorner(3, 4)" cx="40" cy="200" r="16" fill="#ef4444" stroke="#fff" stroke-width="4" class="cursor-pointer animate-pulse"/>
+                `
+            },
+            {
+                nameEn: "Rectangle",
+                nameAr: "مُسْتَطِيل",
+                sidesText: "4 Sides (2 Long, 2 Short)",
+                totalCorners: 4,
+                svg: `
+                    <rect x="20" y="60" width="200" height="120" rx="10" fill="#86efac" stroke="#16a34a" stroke-width="6"/>
+                    <circle id="corner-0" onclick="tapCorner(0, 4)" cx="20" cy="60" r="16" fill="#ef4444" stroke="#fff" stroke-width="4" class="cursor-pointer animate-pulse"/>
+                    <circle id="corner-1" onclick="tapCorner(1, 4)" cx="220" cy="60" r="16" fill="#ef4444" stroke="#fff" stroke-width="4" class="cursor-pointer animate-pulse"/>
+                    <circle id="corner-2" onclick="tapCorner(2, 4)" cx="220" cy="180" r="16" fill="#ef4444" stroke="#fff" stroke-width="4" class="cursor-pointer animate-pulse"/>
+                    <circle id="corner-3" onclick="tapCorner(3, 4)" cx="20" cy="180" r="16" fill="#ef4444" stroke="#fff" stroke-width="4" class="cursor-pointer animate-pulse"/>
+                `
+            },
+            {
+                nameEn: "Circle",
+                nameAr: "دَائِرَة",
+                sidesText: "1 Curved Line (0 Straight Sides)",
+                totalCorners: 0,
+                svg: `
+                    <circle cx="120" cy="120" r="85" fill="#f472b6" stroke="#db2777" stroke-width="6"/>
+                    <text x="120" y="128" font-size="20" font-weight="bold" fill="#fff" text-anchor="middle">No Corners!</text>
+                `
+            },
+            {
+                nameEn: "Pentagon",
+                nameAr: "شَكْل خُمَاسِي",
+                sidesText: "5 Straight Sides",
+                totalCorners: 5,
+                svg: `
+                    <polygon points="120,25 215,95 180,205 60,205 25,95" fill="#d8b4fe" stroke="#9333ea" stroke-width="6"/>
+                    <circle id="corner-0" onclick="tapCorner(0, 5)" cx="120" cy="25" r="15" fill="#ef4444" stroke="#fff" stroke-width="4" class="cursor-pointer animate-pulse"/>
+                    <circle id="corner-1" onclick="tapCorner(1, 5)" cx="215" cy="95" r="15" fill="#ef4444" stroke="#fff" stroke-width="4" class="cursor-pointer animate-pulse"/>
+                    <circle id="corner-2" onclick="tapCorner(2, 5)" cx="180" cy="205" r="15" fill="#ef4444" stroke="#fff" stroke-width="4" class="cursor-pointer animate-pulse"/>
+                    <circle id="corner-3" onclick="tapCorner(3, 5)" cx="60" cy="205" r="15" fill="#ef4444" stroke="#fff" stroke-width="4" class="cursor-pointer animate-pulse"/>
+                    <circle id="corner-4" onclick="tapCorner(4, 5)" cx="25" cy="95" r="15" fill="#ef4444" stroke="#fff" stroke-width="4" class="cursor-pointer animate-pulse"/>
+                `
+            }
+        ];
+
+        // --- Arabic Letters & Tracing Items ---
+        const TRACE_ITEMS = [
+            { char: "أ", name: "حرف الألف (من أعلى لأسفل)", start: {x: 170, y: 70}, end: {x: 170, y: 270}, guide: "vertical" },
+            { char: "ب", name: "حرف الباء (يمين ثم يسار ثم للأعلى)", start: {x: 260, y: 150}, end: {x: 80, y: 150}, guide: "plate" },
+            { char: "د", name: "حرف الدال (انحناء من اليمين لليسار)", start: {x: 230, y: 140}, end: {x: 110, y: 220}, guide: "curve" },
+            { char: "5", name: "الرقم 5 السليم (أفقي يسار ⬅️ ثم أسفل ⬇️ ثم نصف دائرة)", start: {x: 220, y: 90}, end: {x: 120, y: 250}, guide: "five" },
+            { char: "C", name: "Letter C (Top Left Curve Downwards)", start: {x: 240, y: 100}, end: {x: 240, y: 240}, guide: "curve-left" },
+            { char: "b", name: "Letter b (Straight Stick Down then Belly to the Right)", start: {x: 110, y: 60}, end: {x: 180, y: 230}, guide: "stick-belly" }
+        ];
+
+        // --- Arabic Repeat Syllables ("ردّد معي") ---
+        const REPEAT_WORDS = [
+            { pic: "📖", syllables: ["كَـ", "تَـ", "بَ"], full: "كَتَبَ" },
+            { pic: "🎨", syllables: ["رَ", "سَـ", "مَ"], full: "رَسَمَ" },
+            { pic: "🍎", syllables: ["أَ", "كَـ", "لَ"], full: "أَكَلَ" },
+            { pic: "🥛", syllables: ["شَـ", "رِ", "بَ"], full: "شَرِبَ" },
+            { pic: "🏃", syllables: ["لَـ", "عِـ", "بَ"], full: "لَعِبَ" }
+        ];
+
+        /* ================= 2. PURE AUDIO ENGINE ================= */
+        function getAudioContext() {
+            if (!APP_STATE.audioCtx) {
+                const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+                APP_STATE.audioCtx = new AudioCtxClass();
+            }
+            if (APP_STATE.audioCtx.state === 'suspended') {
+                APP_STATE.audioCtx.resume();
+            }
+            return APP_STATE.audioCtx;
+        }
+
+        function playTone(freq, type = 'sine', duration = 0.25, gainVal = 0.2) {
+            try {
+                const ctx = getAudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                gain.gain.setValueAtTime(gainVal, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch (e) {
+                console.warn("Audio play issue", e);
+            }
+        }
+
+        function playFanfareSuccess() {
+            playTone(523.25, 'triangle', 0.15, 0.2); // C5
+            setTimeout(() => playTone(659.25, 'triangle', 0.15, 0.2), 120); // E5
+            setTimeout(() => playTone(783.99, 'triangle', 0.2, 0.25), 240); // G5
+            setTimeout(() => playTone(1046.50, 'sine', 0.45, 0.3), 360); // C6
+        }
+
+        function playPopSound() {
+            playTone(400, 'sine', 0.08, 0.15);
+        }
+
+        function playBuzzError() {
+            playTone(180, 'sawtooth', 0.2, 0.2);
+        }
+
+        function pronounceNative(text, lang = 'en-US') {
+            try {
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const u = new SpeechSynthesisUtterance(text);
+                    u.lang = lang;
+                    u.rate = 0.85; // pleasant & clear for kids
+                    window.speechSynthesis.speak(u);
+                }
+            } catch (e) {
+                console.warn(e);
+            }
+        }
+
+        /* ================= 3. ROUTING & VIEW CONTROLLERS ================= */
+        const ALL_SECTIONS = [
+            'view-landing', 'view-dashboard', 'view-subject-games-list',
+            'arena-tracing', 'arena-positions', 'arena-harakat', 'arena-madd',
+            'arena-repeat-lab', 'arena-phonics', 'arena-vowels', 'arena-reversals',
+            'arena-pic-bank', 'arena-sight-words', 'arena-number-words',
+            'arena-missing-numbers', 'arena-crocodile', 'arena-visual-math', 'arena-shapes'
+        ];
+
+        function switchSection(targetId) {
+            ALL_SECTIONS.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.classList.add('hidden');
+                    el.classList.remove('flex');
+                }
+            });
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.classList.remove('hidden');
+                target.classList.add('flex');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function selectAvatar(avatarEmoji, el) {
+            APP_STATE.avatar = avatarEmoji;
+            document.querySelectorAll('.avatar-option').forEach(d => d.classList.remove('avatar-selected'));
+            if (el) el.classList.add('avatar-selected');
+            playPopSound();
+        }
+
+        function submitRegistration() {
+            const name = document.getElementById('reg-name-input').value.trim() || "رهف";
+            const phone = document.getElementById('reg-phone-input').value.trim();
+            const grade = document.getElementById('reg-grade-select').value;
+
+            APP_STATE.childName = name;
+            APP_STATE.phone = phone;
+            APP_STATE.grade = grade;
+
+            // Sync Header & Dashboard Badges
+            document.getElementById('nav-child-name').innerText = name;
+            document.getElementById('nav-child-avatar').innerText = APP_STATE.avatar;
+            document.getElementById('nav-child-grade').innerText = grade;
+            document.getElementById('dash-avatar-badge').innerText = APP_STATE.avatar;
+            document.getElementById('dash-greeting-txt').innerText = `Welcome Hero ${name}! 🌟`;
+            document.getElementById('cert-child-name').innerText = `${name.toUpperCase()} (${name})`;
+
+            document.getElementById('top-nav-bar').classList.remove('hidden');
+            document.getElementById('top-nav-bar').classList.add('flex');
+
+            playFanfareSuccess();
+            switchSection('view-dashboard');
+        }
+
+        function goToSubjectSelection() {
+            playPopSound();
+            switchSection('view-dashboard');
+        }
+
+        function returnToActiveSubjectMenu() {
+            playPopSound();
+            if (APP_STATE.activeSubject) {
+                openSubjectSection(APP_STATE.activeSubject);
+            } else {
+                goToSubjectSelection();
+            }
+        }
+
+        /* ================= 4. SUBJECT DIRECTORY GENERATOR ================= */
+        function openSubjectSection(subjectKey) {
+            APP_STATE.activeSubject = subjectKey;
+            playPopSound();
+            const container = document.getElementById('games-cards-container');
+            container.innerHTML = '';
+
+            const iconEl = document.getElementById('subject-menu-icon');
+            const titleEl = document.getElementById('subject-menu-title');
+
+            if (subjectKey === 'arabic') {
+                iconEl.innerText = "🇸🇦";
+                titleEl.innerText = "اللغة العربية | Arabic Foundation";
+
+                renderActivityCard(container, "المستوى 1: مسار الحروف بالاتجاه الصحيح 🌟", "التدريب على رسم الحرف من اليمين لليمن وعدم العكس.", "✍️", () => startTracingActivity('arabic'));
+                renderActivityCard(container, "المستوى 1: مواضع الحرف بالكلمة 📍", "أول، وسط، وآخر الكلمة مع صور ملونة كبيرة.", "🐄", startPositionsActivity);
+                renderActivityCard(container, "المستوى 2: قطار الحركات والسكون 🚂", "الفتحة، الضمة، الكسرة، والسكون مع النطق.", "🚆", startHarakatActivity);
+                renderActivityCard(container, "المستوى 2: رحلة المدود الثلاثة 🏝️", "المد بالألف، الواو، والياء بصور مبهجة.", "☁️", startMaddActivity);
+                renderActivityCard(container, "المستوى 3: مختبر 'ردّدي معي يا بطلة' 🎙️📖", "تحليل المقاطع الصوتية والترديد الصوتي للكلمة.", "🎙️", startRepeatLabActivity);
+
+            } else if (subjectKey === 'english') {
+                iconEl.innerText = "🇬🇧";
+                titleEl.innerText = "English (Language School Track)";
+
+                renderActivityCard(container, "Level 1: Letter Tracing & b/d Direction ✍️", "Strict Left-to-Right guide on writing lines.", "🅰️", () => startTracingActivity('english'));
+                renderActivityCard(container, "Level 1: Mirror Buster (b vs d, p vs q) 🪞", "Pop the right letters and conquer reversals!", "🎯", startReversalsActivity);
+                renderActivityCard(container, "Level 2: Jolly Phonics Sounds Lab 🎵", "Synthetic short vowel & consonant phonics sounds.", "🔊", startPhonicsActivity);
+                renderActivityCard(container, "Level 2: Short Vowels Sorter (a,e,i,o,u) 🧺", "Classify vowels vs consonants at top speed.", "🍎", startVowelsActivity);
+                renderActivityCard(container, "Level 3: Sight Words Speed Challenge ⚡", "The, And, Can, See, Is, Big, You...", "🚀", startSightWordsActivity);
+                renderActivityCard(container, "Level 3: CVC Word Builder & Blending 🎨", "Consonant-Vowel-Consonant audio blending.", "🐱", startCVCActivity);
+
+            } else if (subjectKey === 'math') {
+                iconEl.innerText = "🔢";
+                titleEl.innerText = "Math & Arithmetic (English Medium)";
+
+                renderActivityCard(container, "Level 1: Numbers in Words (1 to 20) 🔤🔢", "Spelling tiles & visual counting for ONE to TWENTY.", "1️⃣", startNumberWordsActivity);
+                renderActivityCard(container, "Level 1: Number 5 Tracing (Mirror Fixer) 🖐️", "Step-by-step unreversed 5 handwriting.", "5️⃣", () => startTracingActivity('number5'));
+                renderActivityCard(container, "Level 2: Number Patterns & Missing Numbers 🚂", "Sequences up to 100 with interactive trains.", "🚆", startMissingNumbersActivity);
+                renderActivityCard(container, "Level 2: Hungry Crocodile (> < =) 🐊", "Compare numbers with the hungry crocodile mouth.", "🐊", startCrocodileActivity);
+                renderActivityCard(container, "Level 3: Visual Addition & Subtraction 🍎➕🍊", "Real fruit counters for mental arithmetic.", "➕", startVisualMathActivity);
+                renderActivityCard(container, "Level 3: Shapes, Sides & Corners Lab 📐", "Touch interactive corners to count them in English & Arabic.", "🔺", startShapesLabActivity);
+            }
+
+            switchSection('view-subject-games-list');
+        }
+
+        function renderActivityCard(parent, title, desc, icon, onClickFn) {
+            const card = document.createElement('div');
+            card.className = "card-3d bg-white border-2 border-indigo-200 rounded-2xl p-4 shadow-sm cursor-pointer flex items-center justify-between hover:border-indigo-400";
+            card.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <span class="text-3xl bg-indigo-50 border border-indigo-200 w-12 h-12 rounded-xl flex items-center justify-center font-black">${icon}</span>
+                    <div>
+                        <h4 class="font-black text-slate-900 text-base sm:text-lg">${title}</h4>
+                        <p class="text-xs sm:text-sm text-slate-600 font-bold">${desc}</p>
+                    </div>
+                </div>
+                <span class="text-2xl text-indigo-600">👈</span>
+            `;
+            card.onclick = () => {
+                playPopSound();
+                onClickFn();
+            };
+            parent.appendChild(card);
+        }
+
+        /* ================= 5. REWARD SYSTEM & STARS ================= */
+        function addStarReward(amount = 1) {
+            APP_STATE.stars += amount;
+            document.getElementById('nav-stars-count').innerText = APP_STATE.stars;
+            document.getElementById('cert-stars-val').innerText = `${APP_STATE.stars} ⭐`;
+            playFanfareSuccess();
+        }
+
+        function openTreasureModal() {
+            playPopSound();
+            document.getElementById('modal-treasure').classList.remove('hidden');
+            document.getElementById('modal-treasure').classList.add('flex');
+        }
+
+        function closeTreasureModal() {
+            playPopSound();
+            document.getElementById('modal-treasure').classList.add('hidden');
+            document.getElementById('modal-treasure').classList.remove('flex');
+        }
+
+        function showCertificateModal() {
+            playPopSound();
+            document.getElementById('modal-certificate').classList.remove('hidden');
+            document.getElementById('modal-certificate').classList.add('flex');
+        }
+
+        function closeCertificateModal() {
+            playPopSound();
+            document.getElementById('modal-certificate').classList.add('hidden');
+            document.getElementById('modal-certificate').classList.remove('flex');
+        }
+
+        /* ================= 6. MOTOR & FOCUS 3-MINUTE TIMER ================= */
+        function toggleFocusTimer() {
+            playPopSound();
+            const btn = document.getElementById('focus-clock-btn');
+            if (APP_STATE.timerRunning) {
+                clearInterval(APP_STATE.timerInterval);
+                APP_STATE.timerRunning = false;
+                btn.innerText = "بدء";
+            } else {
+                APP_STATE.timerRunning = true;
+                btn.innerText = "إيقاف";
+                APP_STATE.timerInterval = setInterval(() => {
+                    APP_STATE.timerSeconds--;
+                    if (APP_STATE.timerSeconds <= 0) {
+                        clearInterval(APP_STATE.timerInterval);
+                        APP_STATE.timerRunning = false;
+                        APP_STATE.timerSeconds = 180;
+                        btn.innerText = "بدء";
+                        playFanfareSuccess();
+                        alert("🎉 ممتاز! انتهت دقائق التركيز، قومي بتمارين حركية خفيفة واشربي ماء يا بطلة!");
+                    }
+                    const m = Math.floor(APP_STATE.timerSeconds / 60).toString().padStart(2, '0');
+                    const s = (APP_STATE.timerSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('focus-clock-txt').innerText = `${m}:${s}`;
+                }, 1000);
+            }
+        }
+
+        /* ================= 7. DAD'S AUDIO RECORDING STUDIO ================= */
+        function openParentModal() {
+            playPopSound();
+            document.getElementById('modal-parent-audio').classList.remove('hidden');
+            document.getElementById('modal-parent-audio').classList.add('flex');
+        }
+
+        function closeParentModal() {
+            playPopSound();
+            document.getElementById('modal-parent-audio').classList.add('hidden');
+            document.getElementById('modal-parent-audio').classList.remove('flex');
+        }
+
+        async function toggleParentAudioRecording() {
+            const btn = document.getElementById('btn-record-audio');
+            const lbl = document.getElementById('recording-status-lbl');
+
+            if (APP_STATE.mediaRecorder && APP_STATE.mediaRecorder.state === 'recording') {
+                APP_STATE.mediaRecorder.stop();
+                btn.innerText = "⏺️";
+                btn.classList.remove('bg-emerald-500', 'animate-pulse');
+                btn.classList.add('bg-rose-500');
+                lbl.innerText = "تم حفظ صوتك بنجاح! سيتم تشغيله مع الإنجازات.";
+                playFanfareSuccess();
+            } else {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    APP_STATE.mediaRecorder = new MediaRecorder(stream);
+                    APP_STATE.audioChunks = [];
+
+                    APP_STATE.mediaRecorder.ondataavailable = e => {
+                        APP_STATE.audioChunks.push(e.data);
+                    };
+
+                    APP_STATE.mediaRecorder.onstop = () => {
+                        APP_STATE.dadAudioBlob = new Blob(APP_STATE.audioChunks, { type: 'audio/ogg; codecs=opus' });
+                    };
+
+                    APP_STATE.mediaRecorder.start();
+                    btn.innerText = "⏹️";
+                    btn.classList.remove('bg-rose-500');
+                    btn.classList.add('bg-emerald-500', 'animate-pulse');
+                    lbl.innerText = "جارِ التسجيل الآن... تحدث بصوتك المشجع لبنتك!";
+                } catch (err) {
+                    lbl.innerText = "تنبيه: تعذر فتح المايكروفون في المتصفح.";
+                }
+            }
+        }
+
+        function playDadCheerAudio() {
+            if (APP_STATE.dadAudioBlob) {
+                const audio = new Audio(URL.createObjectURL(APP_STATE.dadAudioBlob));
+                audio.play();
+            } else {
+                playFanfareSuccess();
+                pronounceNative(`شاطرة يا رهف يا بطلة! ممتاز جداً`, 'ar-SA');
+            }
+        }
+
+        /* ================= 8. ACTIVITIES IMPLEMENTATION ================= */
+
+        // --- ACTIVITY 1: Tracing Canvas (Strict Direction) ---
+        let currentTraceIdx = 0;
+        let isTracing = false;
+        let traceStartedCorrectly = false;
+
+        function startTracingActivity(mode) {
+            if (mode === 'english') currentTraceIdx = 4;
+            else if (mode === 'number5') currentTraceIdx = 3;
+            else currentTraceIdx = 0;
+
+            switchSection('arena-tracing');
+            setupTraceItem();
+            initTraceCanvas();
+        }
+
+        function setupTraceItem() {
+            const item = TRACE_ITEMS[currentTraceIdx];
+            document.getElementById('trace-title').innerText = `${item.name} (${item.char})`;
+            clearTraceCanvas();
+        }
+
+        function cycleTraceItem() {
+            currentTraceIdx = (currentTraceIdx + 1) % TRACE_ITEMS.length;
+            setupTraceItem();
+        }
+
+        function initTraceCanvas() {
+            const canvas = document.getElementById('activeCanvas');
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width || 340;
+            canvas.height = rect.height || 340;
+
+            const ctx = canvas.getContext('2d');
+            drawTraceGuides(ctx, canvas);
+
+            canvas.onpointerdown = e => {
+                isTracing = true;
+                const pos = getCanvasPos(canvas, e);
+                const item = TRACE_ITEMS[currentTraceIdx];
+
+                // Check distance to Green Star (Start Anchor)
+                const dist = Math.hypot(pos.x - item.start.x, pos.y - item.start.y);
+                if (dist < 45) {
+                    traceStartedCorrectly = true;
+                    playTone(600, 'sine', 0.1);
+                } else {
+                    traceStartedCorrectly = false;
+                    playBuzzError();
+                }
+
+                ctx.beginPath();
+                ctx.moveTo(pos.x, pos.y);
+            };
+
+            canvas.onpointermove = e => {
+                if (!isTracing || !traceStartedCorrectly) return;
+                const pos = getCanvasPos(canvas, e);
+                ctx.lineWidth = 14;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.strokeStyle = '#10b981';
+                ctx.lineTo(pos.x, pos.y);
+                ctx.stroke();
+
+                const item = TRACE_ITEMS[currentTraceIdx];
+                const finishDist = Math.hypot(pos.x - item.end.x, pos.y - item.end.y);
+                if (finishDist < 35) {
+                    triggerTraceSuccess();
+                }
+            };
+
+            canvas.onpointerup = () => { isTracing = false; };
+            canvas.onpointercancel = () => { isTracing = false; };
+        }
+
+        function getCanvasPos(canvas, evt) {
+            const r = canvas.getBoundingClientRect();
+            return {
+                x: (evt.clientX - r.left) * (canvas.width / r.width),
+                y: (evt.clientY - r.top) * (canvas.height / r.height)
+            };
+        }
+
+        function drawTraceGuides(ctx, canvas) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const item = TRACE_ITEMS[currentTraceIdx];
+
+            // Render Big Background Letter Template
+            ctx.font = "bold 160px 'Baloo Bhaijaan 2', 'Fredoka', sans-serif";
+            ctx.fillStyle = "#f1f5f9";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(item.char, canvas.width / 2, canvas.height / 2 + 10);
+
+            // Draw Green Star (Start)
+            ctx.font = "32px sans-serif";
+            ctx.fillText("🌟", item.start.x, item.start.y);
+
+            // Draw Checkered Flag (Finish)
+            ctx.fillText("🏁", item.end.x, item.end.y);
+        }
+
+        function clearTraceCanvas() {
+            const canvas = document.getElementById('activeCanvas');
+            const ctx = canvas.getContext('2d');
+            drawTraceGuides(ctx, canvas);
+            document.getElementById('trace-win-overlay').classList.add('opacity-0');
+            document.getElementById('trace-win-overlay').classList.add('pointer-events-none');
+        }
+
+        function triggerTraceSuccess() {
+            isTracing = false;
+            traceStartedCorrectly = false;
+            const overlay = document.getElementById('trace-win-overlay');
+            overlay.classList.remove('opacity-0');
+            overlay.classList.remove('pointer-events-none');
+            addStarReward(2);
+            setTimeout(() => {
+                overlay.classList.add('opacity-0');
+                overlay.classList.add('pointer-events-none');
+                cycleTraceItem();
+            }, 1200);
+        }
+
+        // --- ACTIVITY 2: Letter Positions ---
+        const POS_DATA = [
+            { pic: "🐄", word: "ـقَرَة", missingPos: "أول الكلمة", correct: "بـ", options: ["بـ", "ـبـ", "ـب"] },
+            { pic: "🦆", word: "بَـ...ـة", missingPos: "وسط الكلمة", correct: "ـطـ", options: ["ط", "ـطـ", "ـط"] },
+            { pic: "🦁", word: "أَسَـ...", missingPos: "آخر الكلمة", correct: "ـد", options: ["ـد", "د", "ـدـ"] }
+        ];
+        let posIdx = 0;
+
+        function startPositionsActivity() {
+            posIdx = 0;
+            switchSection('arena-positions');
+            renderPositionsRound();
+        }
+
+        function renderPositionsRound() {
+            const cur = POS_DATA[posIdx];
+            document.getElementById('pos-image-badge').innerText = cur.pic;
+            document.getElementById('pos-word-display').innerText = cur.word;
+            document.getElementById('pos-instructions').innerText = `اختاري شكل الحرف المناسب في: (${cur.missingPos})`;
+
+            const box = document.getElementById('pos-choices-box');
+            box.innerHTML = '';
+            cur.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "pop-button bg-white border-2 border-teal-300 text-teal-950 font-black py-4 rounded-2xl text-4xl shadow";
+                btn.innerText = opt;
+                btn.onclick = () => {
+                    if (opt === cur.correct) {
+                        addStarReward(1);
+                        posIdx = (posIdx + 1) % POS_DATA.length;
+                        renderPositionsRound();
+                    } else {
+                        playBuzzError();
+                    }
+                };
+                box.appendChild(btn);
+            });
+        }
+
+        // --- ACTIVITY 3: Harakat & Sukoon Train ---
+        const HARAKAT_DATA = [
+            { char: "بَ", soundTxt: "بَا فتحة", name: "فتحة ( َ )" },
+            { char: "بُ", soundTxt: "بُو ضمة", name: "ضمة ( ُ )" },
+            { char: "بِ", soundTxt: "بِي كسرة", name: "كسرة ( ِ )" },
+            { char: "بْ", soundTxt: "بْ سكون", name: "سكون ( ْ )" }
+        ];
+        let harakatIdx = 0;
+
+        function startHarakatActivity() {
+            harakatIdx = 0;
+            switchSection('arena-harakat');
+            renderHarakatRound();
+        }
+
+        function renderHarakatRound() {
+            const cur = HARAKAT_DATA[harakatIdx];
+            document.getElementById('harakat-char-display').innerText = cur.char;
+
+            const grid = document.getElementById('harakat-options-grid');
+            grid.innerHTML = '';
+
+            const allNames = ["فتحة ( َ )", "ضمة ( ُ )", "كسرة ( ِ )", "سكون ( ْ )"];
+            allNames.forEach(n => {
+                const btn = document.createElement('button');
+                btn.className = "pop-button bg-white border-2 border-teal-300 text-teal-950 font-black py-4 rounded-2xl shadow text-base";
+                btn.innerText = n;
+                btn.onclick = () => {
+                    if (n === cur.name) {
+                        addStarReward(1);
+                        harakatIdx = (harakatIdx + 1) % HARAKAT_DATA.length;
+                        renderHarakatRound();
+                    } else {
+                        playBuzzError();
+                    }
+                };
+                grid.appendChild(btn);
+            });
+        }
+
+        function pronounceCurrentHarakat() {
+            pronounceNative(HARAKAT_DATA[harakatIdx].soundTxt, 'ar-SA');
+        }
+
+        // --- ACTIVITY 4: Madd Journey ---
+        const MADD_DATA = [
+            { pic: "☁️", word: "سَمَاء", correct: "ألف" },
+            { pic: "🐦", word: "عُصْفُور", correct: "واو" },
+            { pic: "🛏️", word: "سَرِير", correct: "ياء" }
+        ];
+        let maddIdx = 0;
+
+        function startMaddActivity() {
+            maddIdx = 0;
+            switchSection('arena-madd');
+            renderMaddRound();
+        }
+
+        function renderMaddRound() {
+            const cur = MADD_DATA[maddIdx];
+            document.getElementById('madd-icon-pic').innerText = cur.pic;
+            document.getElementById('madd-word-txt').innerText = cur.word;
+        }
+
+        function verifyMaddSelection(type) {
+            if (type === MADD_DATA[maddIdx].correct) {
+                addStarReward(1);
+                maddIdx = (maddIdx + 1) % MADD_DATA.length;
+                renderMaddRound();
+            } else {
+                playBuzzError();
+            }
+        }
+
+        // --- ACTIVITY 5: "ردّدي معي" (Listen & Repeat Lab) ---
+        let repeatIdx = 0;
+
+        function startRepeatLabActivity() {
+            repeatIdx = 0;
+            switchSection('arena-repeat-lab');
+            renderRepeatRound();
+        }
+
+        function renderRepeatRound() {
+            const cur = REPEAT_WORDS[repeatIdx];
+            document.getElementById('repeat-pic').innerText = cur.pic;
+            document.getElementById('repeat-full-word').innerText = cur.full;
+
+            const tray = document.getElementById('repeat-syllables-badges');
+            tray.innerHTML = '';
+            cur.syllables.forEach((syl, i) => {
+                const b = document.createElement('span');
+                b.className = "bg-purple-200 text-purple-950 px-4 py-2 rounded-xl text-3xl font-black";
+                b.innerText = syl;
+                tray.appendChild(b);
+                if (i < cur.syllables.length - 1) {
+                    const plus = document.createElement('span');
+                    plus.className = "text-2xl font-black text-purple-500";
+                    plus.innerText = "+";
+                    tray.appendChild(plus);
+                }
+            });
+
+            document.getElementById('repeat-feedback-box').innerText = "اضغطي على 'اسمعي النطق'، ثم رددي بصوتك الجميل!";
+        }
+
+        function pronounceRepeatTarget() {
+            pronounceNative(REPEAT_WORDS[repeatIdx].full, 'ar-SA');
+        }
+
+        function simulateChildRepeat() {
+            playPopSound();
+            const btn = document.getElementById('child-mic-btn');
+            btn.classList.add('animate-pulse', 'bg-rose-500');
+            document.getElementById('repeat-feedback-box').innerText = "أحسنتِ النطق والترديد يا رهف! صوتك رائع 🌟";
+
+            setTimeout(() => {
+                btn.classList.remove('animate-pulse', 'bg-rose-500');
+                addStarReward(2);
+            }, 1000);
+        }
+
+        function nextRepeatWord() {
+            repeatIdx = (repeatIdx + 1) % REPEAT_WORDS.length;
+            renderRepeatRound();
+        }
+
+        // --- ACTIVITY 6: Jolly Phonics Sounds Lab ---
+        let phonicsIdx = 0;
+
+        function startPhonicsActivity() {
+            phonicsIdx = 0;
+            switchSection('arena-phonics');
+            renderPhonicsRound();
+        }
+
+        function renderPhonicsRound() {
+            const cur = PHONICS_DATA[phonicsIdx];
+            document.getElementById('phonics-word-hint').innerText = cur.hint;
+
+            const choices = [cur.letter];
+            while (choices.length < 3) {
+                const rand = PHONICS_DATA[Math.floor(Math.random() * PHONICS_DATA.length)].letter;
+                if (!choices.includes(rand)) choices.push(rand);
+            }
+            choices.sort(() => Math.random() - 0.5);
+
+            const grid = document.getElementById('phonics-choices-grid');
+            grid.innerHTML = '';
+            choices.forEach(ch => {
+                const btn = document.createElement('button');
+                btn.className = "pop-button bg-white border-2 border-indigo-300 text-indigo-950 font-black py-4 rounded-2xl text-4xl shadow";
+                btn.innerText = ch;
+                btn.onclick = () => {
+                    if (ch === cur.letter) {
+                        addStarReward(1);
+                        phonicsIdx = (phonicsIdx + 1) % PHONICS_DATA.length;
+                        renderPhonicsRound();
+                    } else {
+                        playBuzzError();
+                    }
+                };
+                grid.appendChild(btn);
+            });
+        }
+
+        function playPhonicsAudio() {
+            pronounceNative(PHONICS_DATA[phonicsIdx].sound, 'en-US');
+        }
+
+        // --- ACTIVITY 7: Vowels Sorter ---
+        const VOWEL_LETTERS = ['A', 'E', 'I', 'O', 'U'];
+        const ALL_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
+        let currentVowelTarget = 'A';
+        let vowelStreak = 0;
+
+        function startVowelsActivity() {
+            vowelStreak = 0;
+            switchSection('arena-vowels');
+            nextVowelTarget();
+        }
+
+        function nextVowelTarget() {
+            currentVowelTarget = ALL_ALPHABET[Math.floor(Math.random() * ALL_ALPHABET.length)];
+            document.getElementById('vowels-active-char').innerText = currentVowelTarget;
+            document.getElementById('vowels-streak-counter').innerText = `Streak: ${vowelStreak} 🔥`;
+        }
+
+        function verifyVowelChoice(isVowelUserPick) {
+            const isActualVowel = VOWEL_LETTERS.includes(currentVowelTarget);
+            if (isVowelUserPick === isActualVowel) {
+                vowelStreak++;
+                addStarReward(1);
+                nextVowelTarget();
+            } else {
+                vowelStreak = 0;
+                playBuzzError();
+                document.getElementById('vowels-streak-counter').innerText = `Streak: 0 🔥`;
+            }
+        }
+
+        // --- ACTIVITY 8: Mirror Buster (b vs d) ---
+        let reversalsScore = 0;
+
+        function startReversalsActivity() {
+            reversalsScore = 0;
+            switchSection('arena-reversals');
+            renderReversalsBubbles();
+        }
+
+        function renderReversalsBubbles() {
+            const area = document.getElementById('reversals-bubble-area');
+            area.innerHTML = '';
+            document.getElementById('reversals-score-display').innerText = `Score: ${reversalsScore} 🎯`;
+
+            const letters = ['b', 'd', 'b', 'd', 'b', 'd'];
+            letters.sort(() => Math.random() - 0.5);
+
+            letters.forEach(l => {
+                const btn = document.createElement('button');
+                btn.className = "pop-button w-24 h-24 rounded-full bg-gradient-to-tr from-pink-400 to-amber-200 border-4 border-white shadow-lg flex items-center justify-center text-5xl font-black text-slate-900";
+                btn.innerText = l;
+                btn.onclick = () => {
+                    if (l === 'b') {
+                        reversalsScore++;
+                        btn.classList.add('scale-0', 'transition-all');
+                        playPopSound();
+                        if (reversalsScore % 4 === 0) {
+                            addStarReward(1);
+                            renderReversalsBubbles();
+                        }
+                    } else {
+                        playBuzzError();
+                    }
+                };
+                area.appendChild(btn);
+            });
+        }
+
+        // --- ACTIVITY 9: CVC Word Builder ---
+        let cvcIdx = 0;
+
+        function startCVCActivity() {
+            cvcIdx = 0;
+            switchSection('arena-pic-bank');
+            renderCVCRound();
+        }
+
+        function renderCVCRound() {
+            const cur = CVC_DATA[cvcIdx];
+            document.getElementById('picbank-emoji').innerText = cur.emoji;
+            document.getElementById('picbank-word-box').innerText = cur.word.split('').join(' - ');
+
+            const box = document.getElementById('picbank-options-box');
+            box.innerHTML = '';
+            cur.choices.forEach(ch => {
+                const btn = document.createElement('button');
+                btn.className = "pop-button bg-white border-2 border-amber-300 text-amber-950 font-black py-4 rounded-2xl text-2xl shadow";
+                btn.innerText = ch;
+                btn.onclick = () => {
+                    if (ch === cur.word) {
+                        addStarReward(1);
+                        cvcIdx = (cvcIdx + 1) % CVC_DATA.length;
+                        renderCVCRound();
+                    } else {
+                        playBuzzError();
+                    }
+                };
+                box.appendChild(btn);
+            });
+        }
+
+        function pronounceCurrentCVC() {
+            pronounceNative(CVC_DATA[cvcIdx].word, 'en-US');
+        }
+
+        // --- ACTIVITY 10: Sight Words Speed Burst ---
+        let currentSightWord = "THE";
+
+        function startSightWordsActivity() {
+            switchSection('arena-sight-words');
+            nextSightWordRound();
+        }
+
+        function nextSightWordRound() {
+            currentSightWord = SIGHT_WORDS[Math.floor(Math.random() * SIGHT_WORDS.length)];
+            pronounceSightWord();
+
+            const choices = [currentSightWord];
+            while (choices.length < 4) {
+                const r = SIGHT_WORDS[Math.floor(Math.random() * SIGHT_WORDS.length)];
+                if (!choices.includes(r)) choices.push(r);
+            }
+            choices.sort(() => Math.random() - 0.5);
+
+            const box = document.getElementById('sight-words-choices-box');
+            box.innerHTML = '';
+            choices.forEach(w => {
+                const btn = document.createElement('button');
+                btn.className = "pop-button bg-white border-2 border-purple-300 text-purple-950 font-black py-5 rounded-2xl text-3xl shadow";
+                btn.innerText = w;
+                btn.onclick = () => {
+                    if (w === currentSightWord) {
+                        addStarReward(1);
+                        nextSightWordRound();
+                    } else {
+                        playBuzzError();
+                    }
+                };
+                box.appendChild(btn);
+            });
+        }
+
+        function pronounceSightWord() {
+            pronounceNative(currentSightWord, 'en-US');
+        }
+
+        // --- ACTIVITY 11: Numbers in Words (1 to 20 Complete) ---
+        let numWordIdx = 0;
+        let typedWordLetters = [];
+
+        function startNumberWordsActivity() {
+            numWordIdx = 0;
+            switchSection('arena-number-words');
+            renderNumberWordsRound();
+        }
+
+        function renderNumberWordsRound() {
+            typedWordLetters = [];
+            const cur = NUMBERS_IN_WORDS[numWordIdx];
+            document.getElementById('numwords-digit-display').innerText = cur.num;
+            document.getElementById('numwords-visual-dots').innerText = cur.dots;
+
+            renderSlotsTray(cur.word);
+            renderLettersPool(cur.word);
+            renderQuizChoices(cur.word);
+        }
+
+        function renderSlotsTray(target) {
+            const tray = document.getElementById('numwords-slots-tray');
+            tray.innerHTML = '';
+            for (let i = 0; i < target.length; i++) {
+                const slot = document.createElement('div');
+                slot.id = `numword-slot-${i}`;
+                slot.className = "w-12 h-14 bg-white border-2 border-dashed border-amber-400 rounded-xl flex items-center justify-center text-3xl font-black text-amber-950 shadow-sm";
+                slot.innerText = typedWordLetters[i] || "_";
+                tray.appendChild(slot);
+            }
+        }
+
+        function renderLettersPool(target) {
+            const pool = document.getElementById('numwords-letters-pool');
+            pool.innerHTML = '';
+            const scrambled = target.split('').sort(() => Math.random() - 0.5);
+
+            scrambled.forEach(letter => {
+                const btn = document.createElement('button');
+                btn.className = "pop-button bg-amber-500 hover:bg-amber-600 text-white font-black w-14 h-14 rounded-2xl text-2xl shadow-md border-2 border-white flex items-center justify-center";
+                btn.innerText = letter;
+                btn.onclick = () => {
+                    if (typedWordLetters.length < target.length) {
+                        typedWordLetters.push(letter);
+                        renderSlotsTray(target);
+                        playPopSound();
+
+                        if (typedWordLetters.length === target.length) {
+                            if (typedWordLetters.join('') === target) {
+                                addStarReward(2);
+                                setTimeout(nextNumberWordItem, 600);
+                            } else {
+                                playBuzzError();
+                                setTimeout(resetNumberWordRound, 500);
+                            }
+                        }
+                    }
+                };
+                pool.appendChild(btn);
+            });
+        }
+
+        function renderQuizChoices(correctWord) {
+            const box = document.getElementById('numwords-quiz-choices');
+            box.innerHTML = '';
+
+            const choices = [correctWord];
+            while (choices.length < 3) {
+                const r = NUMBERS_IN_WORDS[Math.floor(Math.random() * NUMBERS_IN_WORDS.length)].word;
+                if (!choices.includes(r)) choices.push(r);
+            }
+            choices.sort(() => Math.random() - 0.5);
+
+            choices.forEach(w => {
+                const btn = document.createElement('button');
+                btn.className = "pop-button bg-white border-2 border-amber-300 text-amber-950 font-black py-4 rounded-2xl text-xl shadow";
+                btn.innerText = w;
+                btn.onclick = () => {
+                    if (w === correctWord) {
+                        addStarReward(1);
+                        nextNumberWordItem();
+                    } else {
+                        playBuzzError();
+                    }
+                };
+                box.appendChild(btn);
+            });
+        }
+
+        function resetNumberWordRound() {
+            typedWordLetters = [];
+            renderSlotsTray(NUMBERS_IN_WORDS[numWordIdx].word);
+        }
+
+        function nextNumberWordItem() {
+            numWordIdx = (numWordIdx + 1) % NUMBERS_IN_WORDS.length;
+            renderNumberWordsRound();
+        }
+
+        function pronounceNumberWord() {
+            pronounceNative(NUMBERS_IN_WORDS[numWordIdx].word, 'en-US');
+        }
+
+        // --- ACTIVITY 12: Missing Numbers ---
+        function startMissingNumbersActivity() {
+            switchSection('arena-missing-numbers');
+            renderMissingNumbersRound();
+        }
+
+        function renderMissingNumbersRound() {
+            const start = Math.floor(Math.random() * 15) + 1;
+            const missingAns = start + 2;
+
+            const train = document.getElementById('missing-nums-train');
+            train.innerHTML = '';
+
+            for (let i = 0; i < 4; i++) {
+                const val = start + i;
+                const box = document.createElement('div');
+                box.className = "w-16 h-16 bg-white rounded-2xl border-2 border-orange-300 shadow flex items-center justify-center text-3xl font-black";
+                if (val === missingAns) {
+                    box.innerText = "❓";
+                    box.classList.add('bg-amber-100', 'text-amber-600', 'animate-pulse');
+                } else {
+                    box.innerText = val;
+                }
+                train.appendChild(box);
+            }
+
+            const choices = [missingAns, missingAns + 1, Math.max(1, missingAns - 1)].sort(() => Math.random() - 0.5);
+            const box = document.getElementById('missing-nums-choices');
+            box.innerHTML = '';
+
+            choices.forEach(c => {
+                const btn = document.createElement('button');
+                btn.className = "pop-button bg-white border-2 border-orange-400 text-orange-950 font-black py-4 rounded-2xl text-3xl shadow";
+                btn.innerText = c;
+                btn.onclick = () => {
+                    if (c === missingAns) {
+                        addStarReward(1);
+                        renderMissingNumbersRound();
+                    } else {
+                        playBuzzError();
+                    }
+                };
+                box.appendChild(btn);
+            });
+        }
+
+        // --- ACTIVITY 13: Crocodile Comparison (> < =) ---
+        let leftCrocNum = 5;
+        let rightCrocNum = 3;
+
+        function startCrocodileActivity() {
+            switchSection('arena-crocodile');
+            nextCrocodileRound();
+        }
+
+        function nextCrocodileRound() {
+            leftCrocNum = Math.floor(Math.random() * 12) + 1;
+            rightCrocNum = Math.floor(Math.random() * 12) + 1;
+            document.getElementById('croc-left-num').innerText = leftCrocNum;
+            document.getElementById('croc-right-num').innerText = rightCrocNum;
+            document.getElementById('croc-mouth-state').innerText = "❓";
+        }
+
+        function verifyCrocSign(sign) {
+            let correct = false;
+            if (sign === '>' && leftCrocNum > rightCrocNum) correct = true;
+            if (sign === '<' && leftCrocNum < rightCrocNum) correct = true;
+            if (sign === '=' && leftCrocNum === rightCrocNum) correct = true;
+
+            if (correct) {
+                document.getElementById('croc-mouth-state').innerText = sign;
+                addStarReward(1);
+                setTimeout(nextCrocodileRound, 600);
+            } else {
+                playBuzzError();
+            }
+        }
+
+        // --- ACTIVITY 14: Visual Math (Addition) ---
+        let mathAns = 3;
+
+        function startVisualMathActivity() {
+            switchSection('arena-visual-math');
+            renderVisualMathRound();
+        }
+
+        function renderVisualMathRound() {
+            const a = Math.floor(Math.random() * 5) + 1;
+            const b = Math.floor(Math.random() * 4) + 1;
+            mathAns = a + b;
+
+            document.getElementById('fruit-group-a').innerText = "🍎".repeat(a);
+            document.getElementById('fruit-group-b').innerText = "🍊".repeat(b);
+
+            const choices = [mathAns, mathAns + 1, Math.max(1, mathAns - 1)].sort(() => Math.random() - 0.5);
+            const box = document.getElementById('fruit-math-choices');
+            box.innerHTML = '';
+
+            choices.forEach(ch => {
+                const btn = document.createElement('button');
+                btn.className = "pop-button bg-white border-2 border-orange-400 text-orange-950 font-black py-4 rounded-2xl text-3xl shadow";
+                btn.innerText = ch;
+                btn.onclick = () => {
+                    if (ch === mathAns) {
+                        addStarReward(1);
+                        renderVisualMathRound();
+                    } else {
+                        playBuzzError();
+                    }
+                };
+                box.appendChild(btn);
+            });
+        }
+
+        // --- ACTIVITY 15: Jumbo Shapes, Sides & Clickable Corners Lab ---
+        let currentShapeIdx = 0;
+        let tappedCorners = new Set();
+
+        function startShapesLabActivity() {
+            currentShapeIdx = 0;
+            switchSection('arena-shapes');
+            renderShapeShowcase();
+        }
+
+        function renderShapeShowcase() {
+            tappedCorners.clear();
+            const cur = SHAPES_DATA[currentShapeIdx];
+            document.getElementById('shape-name-en').innerText = cur.nameEn;
+            document.getElementById('shape-name-ar').innerText = cur.nameAr;
+            document.getElementById('shape-sides-count-badge').innerText = cur.sidesText;
+
+            updateCornersBadge(0, cur.totalCorners);
+            document.getElementById('shape-giant-svg').innerHTML = cur.svg;
+        }
+
+        function tapCorner(cornerId, total) {
+            playPopSound();
+            const el = document.getElementById(`corner-${cornerId}`);
+            if (el) {
+                el.setAttribute('fill', '#10b981'); // Change red to green
+                el.classList.remove('animate-pulse');
+                tappedCorners.add(cornerId);
+
+                updateCornersBadge(tappedCorners.size, total);
+
+                if (tappedCorners.size === total) {
+                    addStarReward(2);
+                }
+            }
+        }
+
+        function updateCornersBadge(curCount, total) {
+            const badge = document.getElementById('shape-corners-count-badge');
+            if (total === 0) {
+                badge.innerText = "0 Corners (Circle)";
+                badge.className = "text-base font-black text-blue-700 bg-blue-100 px-3 py-1 rounded-full";
+            } else {
+                badge.innerText = `${curCount} / ${total} Corners`;
+                badge.className = curCount === total ? 
+                    "text-base font-black text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full" : 
+                    "text-base font-black text-teal-800 bg-teal-100 px-3 py-1 rounded-full";
+            }
+        }
+
+        function nextShapeItem() {
+            currentShapeIdx = (currentShapeIdx + 1) % SHAPES_DATA.length;
+            renderShapeShowcase();
+        }
+
+        function prevShapeItem() {
+            currentShapeIdx = (currentShapeIdx - 1 + SHAPES_DATA.length) % SHAPES_DATA.length;
+            renderShapeShowcase();
+        }
+
+        function pronounceShapeName() {
+            pronounceNative(SHAPES_DATA[currentShapeIdx].nameEn, 'en-US');
+        }
+
+        /* ================= INITIALIZATION ON WINDOW LOAD ================= */
+        window.addEventListener('DOMContentLoaded', () => {
+            // Set default date for certificate
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}/${(now.getMonth()+1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}`;
+            const dateEl = document.getElementById('cert-date-val');
+            if (dateEl) dateEl.innerText = dateStr;
+        });
+    </script>
+</body>
+</html>
